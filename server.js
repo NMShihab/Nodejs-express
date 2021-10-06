@@ -1,5 +1,12 @@
 const express = require('express');
 const path = require('path');
+const routes = require('./router/index');
+const FeedbackService = require('./services/FeedbackService');
+const SpeakerService = require('./services/SpeakerService');
+
+const feedbackService = new FeedbackService('./data/feedback.json');
+
+const speakerService = new SpeakerService('./data/speakers.json');
 
 const app = express();
 
@@ -10,13 +17,13 @@ app.set('views', path.join(__dirname, './views/'));
 
 app.use(express.static(path.join(__dirname, './static/')));
 
-app.get('/', (request, response) => {
-  response.render('pages/index', { pageTitle: 'Welcome!!!' });
-});
-
-app.get('/speakers', (request, response) => {
-  response.sendFile(path.join(__dirname, './static/speakers.html'));
-});
+app.use(
+  '/',
+  routes({
+    feedbackService,
+    speakerService,
+  })
+);
 
 app.listen(PORT, () => {
   console.log(`Express server listing at port : ${PORT}`);
