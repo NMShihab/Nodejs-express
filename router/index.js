@@ -15,7 +15,6 @@ module.exports = (params) => {
     // console.log(`Number of visit is ${request.session.visitcount}`);
 
     const speakerList = await speakerService.getList();
-    console.log(speakerList);
 
     response.render('layout', { pageTitle: 'Welcome!!!', template: 'index', speakerList });
   });
