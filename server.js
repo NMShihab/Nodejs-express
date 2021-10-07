@@ -27,6 +27,12 @@ app.set('views', path.join(__dirname, './views/'));
 
 app.use(express.static(path.join(__dirname, './static/')));
 
+app.use(async (request, response, next) => {
+  const names = await speakerService.getNames();
+  response.locals.speakerName = names;
+  return next();
+});
+
 app.use(
   '/',
   routes({
