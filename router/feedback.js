@@ -1,5 +1,5 @@
 const express = require('express');
-const { check, validationResult } = require('express-validate');
+const { check, validationResult } = require('express-validator');
 
 const feedbackRouter = express.Router();
 
@@ -9,10 +9,16 @@ module.exports = (params) => {
   feedbackRouter.get('/', async (request, response) => {
     const feedbacks = await feedbackService.getList();
     const errors = request.session.feedback ? request.session.feedback.errors : false;
+    const success = request.session.feedback ? request.session.feedback.message : false;
     request.session.feedback = {};
-    console.log(feedbacks);
 
-    response.render('layout', { pageTitle: 'FeedBack', template: 'feedback', feedbacks, errors });
+    response.render('layout', {
+      pageTitle: 'FeedBack',
+      template: 'feedback',
+      feedbacks,
+      errors,
+      success,
+    });
   });
 
   feedbackRouter.post(
@@ -23,7 +29,7 @@ module.exports = (params) => {
       check('title').trim().isLength({ min: 3 }).escape().withMessage('Title is required'),
       check('message').trim().isLength({ min: 5 }).escape().withMessage('Please put a message'),
     ],
-    (request, response) => {
+    async (request, response) => {
       const errors = validationResult(request);
 
       if (!errors.isEmpty()) {
@@ -33,8 +39,16 @@ module.exports = (params) => {
 
         return response.redirect('/feedback');
       }
-      console.log(request.body);
-      return response.send('Feedback posted');
+
+      const { name, email, title, message } = request.body;
+
+      await feedbackService.addEntry(name, email, title, message);
+
+      request.session.feedback = {
+        message: 'Thank you for your feedback',
+      };
+
+      return response.redirect('/feedback');
     }
   );
 

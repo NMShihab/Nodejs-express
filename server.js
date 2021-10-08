@@ -4,7 +4,6 @@ const routes = require('./router/index');
 const FeedbackService = require('./services/FeedbackService');
 const SpeakerService = require('./services/SpeakerService');
 const cookieSession = require('cookie-session');
-const { check, validationResult } = require('express-validate');
 
 const feedbackService = new FeedbackService('./data/feedback.json');
 
