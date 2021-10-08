@@ -4,6 +4,7 @@ const routes = require('./router/index');
 const FeedbackService = require('./services/FeedbackService');
 const SpeakerService = require('./services/SpeakerService');
 const cookieSession = require('cookie-session');
+const { check, validationResult } = require('express-validate');
 
 const feedbackService = new FeedbackService('./data/feedback.json');
 
@@ -21,6 +22,8 @@ app.use(
     keys: ['jdshjsh', 'sjdhjkshkjhs'],
   })
 );
+
+app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views/'));
